@@ -1,0 +1,123 @@
+version: "3.7"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_volume:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/usr/local/etc/mysql/mysql.conf.d/mysqld.cnf:ro
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+
+  web:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: always
+    links:
+      - php
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./laravel-app:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
+
+  php:
+    build:
+      context: docker/php
+      dockerfile: Dockerfile
+    container_name: php
+    env_file:
+      - docker/variables/xdebug.env
+    links:
+      - db
+      - redis
+      - mail
+      - mongodb
+      - rabbitmq
+    volumes:
+      - ./laravel-app:/var/www
+    restart: on-failure
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  node:
+    build:
+      context: docker/node
+      dockerfile: Dockerfile
+    container_name: node
+    ports:
+      - '8080:3000'
+    volumes:
+      - ./:/var/www
+
+  mail:
+    image: mailhog/mailhog
+    container_name: mail
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "8081:80"
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_volume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_volume:/data
+    entrypoint: redis-server --appendonly yes
+    restart: on-failure
+
+  rabbitmq:
+    image: rabbitmq:3.9.5-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_volume:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+    restart: on-failure
+
+volumes:
+  mysql_volume:
+  redis_volume:
+  mongo_volume:
+  rabbitmq_volume:
