@@ -1,16 +1,27 @@
 #!/usr/bin/make
 
-#----------- Make Environment ----------------------
+#---------------------- Make Environment ----------------------
 .DEFAULT_GOAL := help
 SHELL= /bin/sh
 docker_bin= $(shell command -v docker 2> /dev/null)
 docker_compose_bin= docker compose
 
+#---------------------- Make Commands ----------------------
+
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-build: ## Build all containers
-	@echo "🚀 Starting build containers"
-	$(docker_compose_bin) up --build -d
+build: ## Build production all containers
+	@echo "🚀 Copying development config files"
+	ln -s .env.example ./.env
+
+	@echo "🚀 Starting build production containers"
+	$(docker_compose_bin) --env-file .env up --build -d
+dev-build: ## Build dev all containers
+	@echo "🚀 Copying development config files"
+	ln -s .env.dev ./.env
+
+	@echo "🚀 Starting build dev containers"
+	$(docker_compose_bin) --env-file .env.dev up --build -d
 up: ## Start all containers (in background)
 	@echo "🚀 Running all containers"
 	$(docker_compose_bin) up -d
