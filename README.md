@@ -1,6 +1,6 @@
 # Docker-PHP-8
 
-Docker is intended for projects on Laravel version 10.*.
+Docker is intended for projects on Laravel version 11.*.
 
 # Included in this docker
 1. PHP 8.3
@@ -12,6 +12,9 @@ Docker is intended for projects on Laravel version 10.*.
 7. MongoDB
 8. Redis
 9. Rabbitmq
+
+# Usage
+1. Add files to the project root folder.
 
 # Commands
 
