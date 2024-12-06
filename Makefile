@@ -7,17 +7,16 @@ docker_bin= $(shell command -v docker 2> /dev/null)
 docker_compose_bin= docker compose
 
 #---------------------- Make Commands ----------------------
-
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 build: ## Build production all containers
-	@echo "🚀 Copying development config files"
+	@echo "🚀 Copying production environments file"
 	ln -s .env.example ./.env
 
 	@echo "🚀 Starting build production containers"
 	$(docker_compose_bin) --env-file .env up --build -d
 dev-build: ## Build dev all containers
-	@echo "🚀 Copying development config files"
+	@echo "🚀 Copying development environments file"
 	ln -s .env.dev ./.env
 
 	@echo "🚀 Starting build dev containers"
