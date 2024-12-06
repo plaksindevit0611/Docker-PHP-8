@@ -3,15 +3,15 @@
 Docker is intended for projects on Laravel version 10.*.
 
 # Included in this docker
-1. PHP 8.2
+1. PHP 8.3
 2. MySQL 8
 3. Nginx
-4. Node v14
+4. Node v23
 5. Mailhog
 6. phpmyadmin
 7. MongoDB
 8. Redis
-9. Rabbitmq 3.9.5
+9. Rabbitmq
 
 # Commands
 
