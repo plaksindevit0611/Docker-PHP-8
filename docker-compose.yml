@@ -29,7 +29,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./laravel-app:/var/www
+      - ./:/var/www
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
 
   php:
@@ -46,7 +46,7 @@ services:
       - mongodb
       - rabbitmq
     volumes:
-      - ./laravel-app:/var/www
+      - ./:/var/www
     restart: on-failure
     extra_hosts:
       - host.docker.internal:host-gateway
