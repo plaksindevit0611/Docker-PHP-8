@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 if id "user"  >/dev/null 2>&1; then
   echo "User exist"
@@ -11,4 +11,5 @@ if [ ! -d /home/user ]; then
  mkdir /home/user
  chown user:user /home/user
 fi
+
 exec "$@";
